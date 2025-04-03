@@ -17,7 +17,7 @@ st.subheader("Datos Generales del Servicio")
 with st.form(key="form_datos_generales"):
     col1, col2 = st.columns(2)
     with col1:
-        fecha_inicio = st.date_input("Fecha de Inicio del Viaje", format="%Y-%m-%d")
+        fecha_inicio = st.date_input("Fecha de Inicio del Viaje")
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
     with col2:
@@ -26,9 +26,10 @@ with st.form(key="form_datos_generales"):
 
     submitted_gen = st.form_submit_button("Confirmar datos generales")
     if submitted_gen:
+        fecha_inicio_str = fecha_inicio.strftime("%d/%m/%Y")
         st.session_state.datos_generales = {
-            "fecha_inicio": str(fecha_inicio),
-            "fecha_registro": datetime.datetime.now().isoformat(),
+            "fecha_inicio": fecha_inicio_str,
+            "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
             "momento_viaje": momento_viaje,
             "localizador": localizador,
             "nombre_usuario": nombre_usuario,
@@ -99,4 +100,3 @@ if st.session_state.datos_generales:
             # Aquí iría la lógica para guardar en base de datos o exportar
             st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
             st.session_state.clear()
-
