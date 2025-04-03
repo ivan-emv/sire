@@ -26,7 +26,8 @@ st.subheader("Datos Generales del Servicio")
 with st.form(key="form_datos_generales"):
     col1, col2 = st.columns(2)
     with col1:
-        fecha_raw = st.text_input("Fecha de Inicio del Viaje (DD/MM/YYYY)")
+        fecha_raw = st.text_input("Fecha de Inicio del Viaje (DD/MM/YYYY)", max_chars=10)
+
         # Autoformatear fecha si se ingresan solo números
         def autoformat_fecha(fecha):
             digits = re.sub(r"[^0-9]", "", fecha)
@@ -38,7 +39,7 @@ with st.form(key="form_datos_generales"):
             return fecha
 
         fecha_inicio = autoformat_fecha(fecha_raw)
-        st.write(f"Fecha formateada: {fecha_inicio}")
+        st.text_input("Fecha formateada automáticamente", value=fecha_inicio, disabled=True)
 
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
