@@ -26,20 +26,18 @@ st.subheader("Datos Generales del Servicio")
 with st.form(key="form_datos_generales"):
     col1, col2 = st.columns(2)
     with col1:
-        fecha_raw = st.text_input("Fecha de Inicio del Viaje (DD/MM/YYYY)", max_chars=10)
+        def autoformat_fecha_input(entrada):
+            digits = re.sub(r"[^0-9]", "", entrada)
+            if len(digits) >= 8:
+                return f"{digits[:2]}/{digits[2:4]}/{digits[4:8]}"
+            elif len(digits) >= 4:
+                return f"{digits[:2]}/{digits[2:4]}"
+            else:
+                return digits
 
-        # Autoformatear fecha si se ingresan solo números
-        def autoformat_fecha(fecha):
-            digits = re.sub(r"[^0-9]", "", fecha)
-            if len(digits) >= 4:
-                formatted = f"{digits[:2]}/{digits[2:4]}"
-                if len(digits) >= 8:
-                    formatted += f"/{digits[4:8]}"
-                return formatted
-            return fecha
-
-        fecha_inicio = autoformat_fecha(fecha_raw)
-        st.text_input("Fecha formateada automáticamente", value=fecha_inicio, disabled=True)
+        entrada_usuario = st.text_input("Fecha de Inicio del Viaje (DD/MM/YYYY)", max_chars=10)
+        fecha_formateada = autoformat_fecha_input(entrada_usuario)
+        st.markdown(f"**Vista previa de la fecha formateada:** `{fecha_formateada}`")
 
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
@@ -50,7 +48,7 @@ with st.form(key="form_datos_generales"):
     submitted_gen = st.form_submit_button("Confirmar datos generales")
     if submitted_gen:
         st.session_state.datos_generales = {
-            "fecha_inicio": fecha_inicio,
+            "fecha_inicio": fecha_formateada,
             "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
             "momento_viaje": momento_viaje,
             "localizador": localizador,
@@ -110,8 +108,6 @@ if st.session_state.datos_generales:
                     "ERROR EMV", "ERROR OPERADOR/AGENTE VIAJES", "ERROR CLIENTE", "ERROR RECEPTIVO",
                     "FUERZA MAYOR", "ASISTENCIA / AYUDA", "MOTIVOS COMERCIALES",
                     "QUEJA GENERALIZADA", "FELICITACIÓN"])
-
-            # Agregar lógica para Guías, Traslados y Generales (idéntica a esta, con sus campos específicos)
 
         elif tipo_contacto == "Otro":
             st.text_area("Comentario Otros", max_chars=500)
