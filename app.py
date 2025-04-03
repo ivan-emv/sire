@@ -1,4 +1,4 @@
-# Versión corregida con fecha reactiva y formularios con botón de envío
+# Versión completa con lógica condicional para Información, Reclamación y Otro
 import streamlit as st
 import datetime
 import re
@@ -62,14 +62,15 @@ if st.session_state.datos_generales:
 
     tipo_contacto = st.radio("Tipo de contacto", ["Información", "Reclamación", "Otro"], key="tipo_contacto")
 
-    if tipo_contacto == "Información":
-        area_info = st.selectbox("Área Relacionada", [
-            "Traslados/Transfers", "Hotel", "Seguro/Insurance", "Itinerario/Itinerary",
-            "Equipaje/Luggage", "Felicitación Circuito", "Info Guía/Guide Info",
-            "Punto Encuentro/Meeting Point", "Comercial/Commercial", "Enfermedad/Sickness",
-            "Opcionales/Optional Tours", "Otros/Other"], key="area_info")
+    with st.form(key=f"form_incidencia_{len(st.session_state.incidencias)}"):
 
-        with st.form(key=f"form_info_{len(st.session_state.incidencias)}"):
+        if tipo_contacto == "Información":
+            area_info = st.selectbox("Área Relacionada", [
+                "Traslados/Transfers", "Hotel", "Seguro/Insurance", "Itinerario/Itinerary",
+                "Equipaje/Luggage", "Felicitación Circuito", "Info Guía/Guide Info",
+                "Punto Encuentro/Meeting Point", "Comercial/Commercial", "Enfermedad/Sickness",
+                "Opcionales/Optional Tours", "Otros/Other"])
+
             if area_info == "Hotel":
                 st.selectbox("Hotel", HOTELES)
             elif area_info == "Traslados/Transfers":
@@ -80,23 +81,78 @@ if st.session_state.datos_generales:
             comentario = st.text_area("Comentario (máx. 500 caracteres)", max_chars=500)
             resolucion = st.text_input("Resolución")
 
-            col1, col2 = st.columns([1, 1])
-            agregar = col1.form_submit_button("➕ Agregar otro caso")
-            finalizar = col2.form_submit_button("✅ Finalizar")
+        elif tipo_contacto == "Reclamación":
+            area_reclamo = st.selectbox("Área Relacionada", ["Hoteles", "Guías", "Traslados", "Generales"])
 
-            if agregar or finalizar:
-                st.session_state.incidencias.append({
-                    "tipo_contacto": tipo_contacto,
-                    "area": area_info,
-                    "comentario": comentario,
-                    "resolucion": resolucion
-                })
-                st.success("Incidencia agregada correctamente.")
+            if area_reclamo == "Hoteles":
+                st.selectbox("Tipo de Incidencia", [
+                    "Desayuno/Breakfast", "Limpieza-Bichos/Cleanliness-Bugs", "Comodidad/Comfort",
+                    "Ubicación/Location", "Mantenimiento General/Overall Maintenance",
+                    "Habitación/Room", "Robo-Hurto/Theft-Robbery", "Falta Reserva/Reservation Missing",
+                    "Noches Adicionales/Additional Nights", "Otro/Other"])
+                st.selectbox("Hotel", HOTELES)
+                st.text_area("Comentario Hotel", max_chars=500)
+                resolucion = st.selectbox("Resolución Hotel", [
+                    "Reembolso Parcial/Partial Reimbursement", "Reembolso Total/Total Reimbursement",
+                    "Compensación/Compensation", "Descuento Próximo Viaje/Next Trip Discount",
+                    "Cambio Itinerario/Itinerary Change", "Cambio Habitación-Hotel/Room-Hotel Change",
+                    "Se informa al Pasajero/Passenger Informed", "Se informa al Operador/Operator Informed",
+                    "Se informa al Minorista/Agency Informed", "Se informa al Guía/Guide Informed",
+                    "Se informa al Transferista/TSP Informed", "Se informa al Receptivo/Local Provider Informed",
+                    "Se informa a Departamento/Department Informed"])
+                if resolucion.startswith("Reembolso") or resolucion == "Compensación/Compensation":
+                    st.number_input("Monto compensación (€)", min_value=0.0, format="%.2f")
+                st.selectbox("Resultado Hotel", [
+                    "ERROR EMV", "ERROR OPERADOR/AGENTE VIAJES", "ERROR CLIENTE", "ERROR RECEPTIVO",
+                    "FUERZA MAYOR", "ASISTENCIA / AYUDA", "MOTIVOS COMERCIALES",
+                    "QUEJA GENERALIZADA", "FELICITACIÓN"])
 
-            if finalizar:
-                st.markdown("---")
-                st.subheader("Resumen del Registro")
-                st.write("**Datos generales:**", st.session_state.datos_generales)
-                st.write("**Incidencias cargadas:**", st.session_state.incidencias)
-                st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
-                st.session_state.clear()
+            elif area_reclamo == "Guías":
+                st.selectbox("Tipo de Incidencia", [
+                    "Actitud/Attitude", "Felicitación/Congratulation", "Conocimiento/Knowledge",
+                    "Idioma/Language", "Guía Local - Mal Servicio/Local Guide - Poor Service",
+                    "Pérdida Equipaje/Loss of Luggage", "Versiones Contradictorias/Contradictory Versions",
+                    "Otro/Other"])
+                st.selectbox("Trayecto", TRAYECTOS)
+                st.selectbox("Nombre del Guía", GUIAS)
+                st.text_area("Comentario Guía", max_chars=500)
+                resolucion = st.selectbox("Resolución Guías", [
+                    "Reembolso Parcial/Partial Reimbursement", "Reembolso Total/Total Reimbursement",
+                    "Compensación/Compensation", "Descuento Próximo Viaje/Next Trip Discount",
+                    "Cambio Itinerario/Itinerary Change", "Se informa al Pasajero/Passenger Informed",
+                    "Se informa al Operador/Operator Informed", "Se informa al Minorista/Agency Informed",
+                    "Se informa al Guía/Guide Informed", "Se informa al Transferista/TSP Informed",
+                    "Se informa al Receptivo/Local Provider Informed", "Se informa a Departamento/Department Informed"])
+                if resolucion.startswith("Reembolso") or resolucion == "Compensación/Compensation":
+                    st.number_input("Monto compensación (€)", min_value=0.0, format="%.2f")
+                st.selectbox("Resultado Guías", [
+                    "ERROR EMV", "ERROR OPERADOR/AGENTE VIAJES", "ERROR CLIENTE", "ERROR RECEPTIVO",
+                    "FUERZA MAYOR", "ASISTENCIA / AYUDA", "MOTIVOS COMERCIALES",
+                    "QUEJA GENERALIZADA", "FELICITACIÓN"])
+
+        elif tipo_contacto == "Otro":
+            st.text_area("Comentario Otros", max_chars=500)
+            st.selectbox("Resolución Otros", [
+                "Reembolso Parcial/Partial Reimbursement", "Reembolso Total/Total Reimbursement",
+                "Compensación/Compensation", "Descuento Próximo Viaje/Next Trip Discount",
+                "Cambio Itinerario/Itinerary Change", "En Estudio/Pending",
+                "Se informa al Pasajero/Passenger Informed", "Se informa al Operador/Operator Informed",
+                "Se informa al Minorista/Agency Informed", "Se informa al Guía/Guide Informed",
+                "Se informa al Transferista/TSP Informed", "Se informa al Receptivo/Local Provider Informed",
+                "Se informa a Departamento/Department Informed"])
+
+        col1, col2 = st.columns([1, 1])
+        agregar = col1.form_submit_button("➕ Agregar otro caso")
+        finalizar = col2.form_submit_button("✅ Finalizar")
+
+        if agregar or finalizar:
+            st.session_state.incidencias.append({"tipo_contacto": tipo_contacto, "detalle": "Incidencia registrada"})
+            st.success("Incidencia agregada correctamente.")
+
+        if finalizar:
+            st.markdown("---")
+            st.subheader("Resumen del Registro")
+            st.write("**Datos generales:**", st.session_state.datos_generales)
+            st.write("**Incidencias cargadas:**", st.session_state.incidencias)
+            st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
+            st.session_state.clear()
