@@ -172,7 +172,7 @@ if st.session_state.datos_generales:
         st.success("Incidencia agregada correctamente.")
         st.session_state.clean_form = True
         st.session_state.run_id += 1
-        st.experimental_set_query_params(run=st.session_state.run_id)
+        st.query_params(run=st.session_state.run_id)
 
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
@@ -183,4 +183,4 @@ if st.session_state.datos_generales:
         st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
         st.session_state.clear()
         st.session_state.run_id += 1
-        st.experimental_set_query_params(run=st.session_state.run_id)
+        st.query_params(run=st.session_state.run_id)
