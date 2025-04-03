@@ -1,4 +1,4 @@
-# Versión con lógica completa y campo de monto como texto libre
+# Versión con limpieza de formulario al agregar y finalizar incidencias
 import streamlit as st
 import datetime
 import re
@@ -15,6 +15,8 @@ def init_session():
     if "incidencias" not in st.session_state:
         st.session_state.incidencias = []
         st.session_state.datos_generales = {}
+    if "clean_form" not in st.session_state:
+        st.session_state.clean_form = False
 
 init_session()
 
@@ -55,6 +57,13 @@ with st.form(key="form_datos_generales"):
         }
         st.success("✅ Datos generales registrados correctamente.")
 
+# --------- Reset condicional de formulario ---------
+if st.session_state.clean_form:
+    for key in ["tipo_contacto", "area_info", "area_reclamo"]:
+        if key in st.session_state:
+            del st.session_state[key]
+    st.session_state.clean_form = False
+
 # --------- Registro de Incidencias (Dinámico) ---------
 if st.session_state.datos_generales:
     st.markdown("---")
@@ -73,11 +82,9 @@ if st.session_state.datos_generales:
 
         if area_info == "Hotel":
             incidencia["hotel"] = st.selectbox("Hotel", HOTELES)
-
         elif area_info == "Traslados/Transfers":
             incidencia["tipo_traslado"] = st.selectbox("Tipo de Traslado", [
-                "Llegada/Arrival", "Salida/Departure",
-                "Llegada/Arrival-Pto", "Salida/Departure-Pto", "NO APLICA / DOESN´T APPLY"])
+                "Llegada/Arrival", "Salida/Departure", "Llegada/Arrival-Pto", "Salida/Departure-Pto", "NO APLICA / DOESN´T APPLY"])
 
         incidencia["comentario"] = st.text_area("Comentario (máx. 500 caracteres)", max_chars=500)
         incidencia["resolucion"] = st.text_input("Resolución")
@@ -118,8 +125,7 @@ if st.session_state.datos_generales:
             if incidencia["tipo_incidencia"].startswith("BUS"):
                 incidencia["trayecto"] = st.selectbox("Trayecto", TRAYECTOS)
             else:
-                incidencia["tipo_traslado"] = st.selectbox("Tipo de Traslado", [
-                    "Llegada/Arrival", "Salida/Departure", "Llegada/Arrival-Pto", "Salida/Departure-Pto"])
+                incidencia["tipo_traslado"] = st.selectbox("Tipo de Traslado", ["Llegada/Arrival", "Salida/Departure", "Llegada/Arrival-Pto", "Salida/Departure-Pto"])
 
             incidencia["comentario"] = st.text_area("Comentario Traslados", max_chars=500)
 
@@ -168,6 +174,8 @@ if st.session_state.datos_generales:
     if col1.button("➕ Agregar otro caso"):
         st.session_state.incidencias.append(incidencia)
         st.success("Incidencia agregada correctamente.")
+        st.session_state.clean_form = True
+        st.experimental_rerun()
 
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
@@ -177,3 +185,4 @@ if st.session_state.datos_generales:
         st.write("**Incidencias cargadas:**", st.session_state.incidencias)
         st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
         st.session_state.clear()
+        st.experimental_rerun()
