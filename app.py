@@ -24,6 +24,8 @@ def init_session():
         st.session_state.datos_generales = {}
     if "clean_form" not in st.session_state:
         st.session_state.clean_form = False
+    if "run_id" not in st.session_state:
+        st.session_state.run_id = 0
 
 init_session()
 
@@ -169,7 +171,8 @@ if st.session_state.datos_generales:
         st.session_state.incidencias.append(incidencia)
         st.success("Incidencia agregada correctamente.")
         st.session_state.clean_form = True
-        st.experimental_rerun()
+        st.session_state.run_id += 1
+        st.experimental_set_query_params(run=st.session_state.run_id)
 
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
@@ -179,4 +182,5 @@ if st.session_state.datos_generales:
         st.write("**Incidencias cargadas:**", st.session_state.incidencias)
         st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
         st.session_state.clear()
-        st.experimental_rerun()
+        st.session_state.run_id += 1
+        st.experimental_set_query_params(run=st.session_state.run_id)
