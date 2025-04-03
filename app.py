@@ -1,4 +1,4 @@
-# Versión con lógica completa para Reclamación incluyendo Traslados y Generales
+# Versión con lógica completa y campo de monto como texto libre
 import streamlit as st
 import datetime
 import re
@@ -147,7 +147,7 @@ if st.session_state.datos_generales:
             "Se informa al Transferista/TSP Informed", "Se informa al Receptivo/Local Provider Informed",
             "Se informa a Departamento/Department Informed"])
         if incidencia["resolucion"].startswith("Reembolso") or incidencia["resolucion"] == "Compensación/Compensation":
-            incidencia["monto"] = st.number_input("Monto compensación (€)", min_value=0.0, format="%.2f")
+            incidencia["monto"] = st.text_input("Monto compensación o tipo de compensación")
         incidencia["resultado"] = st.selectbox("Resultado", [
             "ERROR EMV", "ERROR OPERADOR/AGENTE VIAJES", "ERROR CLIENTE", "ERROR RECEPTIVO",
             "FUERZA MAYOR", "ASISTENCIA / AYUDA", "MOTIVOS COMERCIALES",
