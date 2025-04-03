@@ -1,6 +1,7 @@
 # Versión Demo con lógica condicional completa para el formulario de incidencias EMV-SIRE
 import streamlit as st
 import datetime
+import re
 
 # --------- Datos simulados ---------
 USUARIOS = ["Usuario A", "Usuario B", "Usuario C"]
@@ -25,7 +26,20 @@ st.subheader("Datos Generales del Servicio")
 with st.form(key="form_datos_generales"):
     col1, col2 = st.columns(2)
     with col1:
-        fecha_inicio = st.date_input("Fecha de Inicio del Viaje")
+        fecha_raw = st.text_input("Fecha de Inicio del Viaje (DD/MM/YYYY)")
+        # Autoformatear fecha si se ingresan solo números
+        def autoformat_fecha(fecha):
+            digits = re.sub(r"[^0-9]", "", fecha)
+            if len(digits) >= 4:
+                formatted = f"{digits[:2]}/{digits[2:4]}"
+                if len(digits) >= 8:
+                    formatted += f"/{digits[4:8]}"
+                return formatted
+            return fecha
+
+        fecha_inicio = autoformat_fecha(fecha_raw)
+        st.write(f"Fecha formateada: {fecha_inicio}")
+
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
     with col2:
@@ -35,7 +49,7 @@ with st.form(key="form_datos_generales"):
     submitted_gen = st.form_submit_button("Confirmar datos generales")
     if submitted_gen:
         st.session_state.datos_generales = {
-            "fecha_inicio": fecha_inicio.strftime("%d/%m/%Y"),
+            "fecha_inicio": fecha_inicio,
             "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
             "momento_viaje": momento_viaje,
             "localizador": localizador,
