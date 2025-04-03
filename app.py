@@ -1,4 +1,4 @@
-# Versión mejorada con control condicional total y fecha formateada dentro del input
+# Versión corregida con fecha reactiva y formularios con botón de envío
 import streamlit as st
 import datetime
 import re
@@ -15,8 +15,6 @@ def init_session():
     if "incidencias" not in st.session_state:
         st.session_state.incidencias = []
         st.session_state.datos_generales = {}
-    if "fecha_input" not in st.session_state:
-        st.session_state.fecha_input = ""
 
 init_session()
 
@@ -36,12 +34,8 @@ with st.form(key="form_datos_generales"):
                 texto = texto[:2] + "/" + texto[2:4]
             return texto
 
-        st.session_state.fecha_input = st.text_input(
-            "Fecha de Inicio del Viaje (DD/MM/YYYY)",
-            value=formatear_fecha(st.session_state.fecha_input),
-            max_chars=10,
-            key="fecha_input"
-        )
+        entrada_usuario = st.text_input("Fecha de Inicio del Viaje (DD/MM/YYYY)", max_chars=10)
+        fecha_formateada = formatear_fecha(entrada_usuario)
 
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
@@ -52,7 +46,7 @@ with st.form(key="form_datos_generales"):
     submitted_gen = st.form_submit_button("Confirmar datos generales")
     if submitted_gen:
         st.session_state.datos_generales = {
-            "fecha_inicio": st.session_state.fecha_input,
+            "fecha_inicio": fecha_formateada,
             "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
             "momento_viaje": momento_viaje,
             "localizador": localizador,
@@ -66,14 +60,14 @@ if st.session_state.datos_generales:
     st.markdown("---")
     st.subheader("Registrar Nueva Incidencia")
 
-    tipo_contacto = st.radio("Tipo de contacto", ["Información", "Reclamación", "Otro"])
+    tipo_contacto = st.radio("Tipo de contacto", ["Información", "Reclamación", "Otro"], key="tipo_contacto")
 
     if tipo_contacto == "Información":
         area_info = st.selectbox("Área Relacionada", [
             "Traslados/Transfers", "Hotel", "Seguro/Insurance", "Itinerario/Itinerary",
             "Equipaje/Luggage", "Felicitación Circuito", "Info Guía/Guide Info",
             "Punto Encuentro/Meeting Point", "Comercial/Commercial", "Enfermedad/Sickness",
-            "Opcionales/Optional Tours", "Otros/Other"])
+            "Opcionales/Optional Tours", "Otros/Other"], key="area_info")
 
         with st.form(key=f"form_info_{len(st.session_state.incidencias)}"):
             if area_info == "Hotel":
@@ -106,5 +100,3 @@ if st.session_state.datos_generales:
                 st.write("**Incidencias cargadas:**", st.session_state.incidencias)
                 st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
                 st.session_state.clear()
-
-    # Aquí se podrá continuar la lógica para Reclamación y Otro con sus respectivas condiciones
