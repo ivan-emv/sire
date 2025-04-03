@@ -2,7 +2,7 @@ import streamlit as st
 import datetime
 import re
 import gspread
-from google.oauth2.service_account import Credentials
+from oauth2client.service_account import ServiceAccountCredentials
 
 # --------- Datos simulados ---------
 USUARIOS = ["Usuario A", "Usuario B", "Usuario C"]
@@ -33,44 +33,18 @@ init_session()
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
 st.title("📝 Formulario de Incidencias EMV-SIRE 2025")
 
-# --------- Función para guardar en Google Sheets usando st.secrets ---------
-def guardar_en_google_sheets(datos_generales, incidencias):
-    try:
-        scope = [
-            "https://spreadsheets.google.com/feeds",
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive.file",
-            "https://www.googleapis.com/auth/drive"
-        ]
-        creds = Credentials.from_service_account_info(st.secrets["gcp_service_account"], scopes=scope)
-        client = gspread.authorize(creds)
-
-        sheet = client.open_by_key("1kBLQAdhYbnP8HTUgpr_rmmGEaOdyMU2tI97ogegrGxY")
-        worksheet = sheet.worksheet("PRUEBA")
-
-        for incidencia in incidencias:
-            fila = {
-                "Fecha Registro": datos_generales.get("fecha_registro", ""),
-                "Fecha Inicio Viaje": datos_generales.get("fecha_inicio", ""),
-                "Momento del Viaje": datos_generales.get("momento_viaje", ""),
-                "Localizador": datos_generales.get("localizador", ""),
-                "Nombre Usuario": datos_generales.get("nombre_usuario", ""),
-                "Operador": datos_generales.get("operador", ""),
-                "Tipo Contacto": incidencia.get("tipo_contacto", ""),
-                "Área": incidencia.get("area", ""),
-                "Comentario": incidencia.get("comentario", ""),
-                "Resolución": incidencia.get("resolucion", ""),
-                "Monto": incidencia.get("monto", ""),
-                "Resultado": incidencia.get("resultado", ""),
-                "Hotel": incidencia.get("hotel", ""),
-                "Trayecto": incidencia.get("trayecto", ""),
-                "Guía": incidencia.get("guia", ""),
-                "Tipo Incidencia": incidencia.get("tipo_incidencia", ""),
-                "Tipo Traslado": incidencia.get("tipo_traslado", "")
-            }
-            worksheet.append_row(list(fila.values()))
-    except Exception as e:
-        st.error(f"❌ Error al guardar en Google Sheets: {e}")
+# --------- Función para guardar en Google Sheets ---------
+def guardar_en_google_sheets(datos_generales, lista_incidencias):
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds_dict = st.secrets["gcp_service_account"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open_by_key("1kBLQAdhYbnP8HTUgpr_rmmGEaOdyMU2tI97ogegrGxY").worksheet("PRUEBA")
+    headers = sheet.row_values(1)
+    for incidencia in lista_incidencias:
+        fila = {**datos_generales, **incidencia}
+        row = [fila.get(col, "") for col in headers]
+        sheet.append_row(row)
 
 # --------- Datos Generales ---------
 st.subheader("Datos Generales del Servicio")
@@ -115,11 +89,28 @@ if st.session_state.datos_generales:
     tipo_contacto = st.radio("Tipo de contacto", ["Información", "Reclamación", "Otro"], key=f"tipo_contacto_{idx}")
     incidencia = {"tipo_contacto": tipo_contacto}
 
-    # (Se mantiene aquí toda la lógica detallada para cada tipo de incidencia)
-    # OMITIDO EN ESTA RESPUESTA PARA BREVEDAD
-    # Consulta la respuesta anterior si necesitas copiarla nuevamente
+    if tipo_contacto == "Información":
+        area_info = st.selectbox("Área Relacionada", [
+            "Traslados/Transfers", "Hotel", "Seguro/Insurance", "Itinerario/Itinerary",
+            "Equipaje/Luggage", "Felicitación Circuito", "Info Guía/Guide Info",
+            "Punto Encuentro/Meeting Point", "Comercial/Commercial", "Enfermedad/Sickness",
+            "Opcionales/Optional Tours", "Otros/Other"], key=f"area_info_{idx}")
+        incidencia["area"] = area_info
 
-    # --- Botones ---
+        if area_info == "Hotel":
+            incidencia["hotel"] = st.selectbox("Hotel", HOTELES, key=f"hotel_{idx}")
+        elif area_info == "Traslados/Transfers":
+            incidencia["tipo_traslado"] = st.selectbox("Tipo de Traslado", [
+                "Llegada/Arrival", "Salida/Departure",
+                "Llegada/Arrival-Pto", "Salida/Departure-Pto", "NO APLICA / DOESN´T APPLY"], key=f"tipo_traslado_{idx}")
+
+        incidencia["comentario"] = st.text_area("Comentario (máx. 500 caracteres)", max_chars=500, key=f"comentario_{idx}")
+        incidencia["resolucion"] = st.selectbox("Resolución", RESOLUCIONES, key=f"resolucion_info_{idx}")
+
+    elif tipo_contacto == "Otro":
+        incidencia["comentario"] = st.text_area("Comentario Otros", max_chars=500, key=f"comentario_otro_{idx}")
+        incidencia["resolucion"] = st.selectbox("Resolución Otros", RESOLUCIONES, key=f"resolucion_otro_{idx}")
+
     col1, col2 = st.columns([1, 1])
     if col1.button("➕ Agregar otro caso"):
         st.session_state.incidencias.append(incidencia)
@@ -129,11 +120,17 @@ if st.session_state.datos_generales:
 
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
-        guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
+
+        try:
+            guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
+            st.success("✅ Los datos han sido guardados correctamente en Google Sheets.")
+        except Exception as e:
+            st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
         st.markdown("---")
         st.subheader("Resumen del Registro")
         st.write("**Datos generales:**", st.session_state.datos_generales)
         st.write("**Incidencias cargadas:**", st.session_state.incidencias)
-        st.success("✅ Registro finalizado y guardado correctamente en Google Sheets.")
+        st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
         st.session_state.clear()
         st.rerun()
