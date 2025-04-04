@@ -311,7 +311,7 @@ if modo == "📝 Carga de Incidencias":
     # --------- Búsqueda de Registros ---------
 elif modo == "🔍 Búsqueda de Registros":
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
-    with st.expander("🔎 FILTROS", expanded=False):
+        with st.expander("🔎 FILTROS", expanded=False):
     st.write("Opciones de filtro")
 
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
