@@ -347,37 +347,71 @@ elif modo == "🔍 Búsqueda de Registros":
         filtro_usuario = usuario_sel.strip() != ""
         filtro_localizador = localizador_sel.strip() != ""
 
+        # --------- Filtros adicionales ---------
+        col3, col4, col5 = st.columns(3)
+        with col3:
+            momento_sel = st.selectbox("Momento del Viaje", [""] + sorted(df_busqueda["momento_viaje"].dropna().unique()))
+        with col4:
+            operador_sel = st.selectbox("Operador", [""] + sorted(df_busqueda["operador"].dropna().unique()))
+        with col5:
+            ciudad_sel = st.selectbox("Ciudad", [""] + sorted(df_busqueda["ciudad"].dropna().unique()))
+
+        col6, col7, col8 = st.columns(3)
+        with col6:
+            tipo_contacto_sel = st.selectbox("Tipo de Contacto", [""] + sorted(df_busqueda["tipo_contacto"].dropna().unique()))
+        with col7:
+            area_sel = st.selectbox("Área Relacionada", [""] + sorted(df_busqueda["area"].dropna().unique()))
+        with col8:
+            trayecto_sel = st.selectbox("Trayecto", [""] + sorted(df_busqueda["trayecto"].dropna().unique()))
+
+        # Filtros condicionales según el área
+        tipo_traslado_sel = ""
+        hotel_sel = ""
+        if area_sel.strip() == "Traslados/Transfers":
+            tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
+        if area_sel.strip() == "Hoteles":
+            hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
+
+        col9, col10 = st.columns(2)
+        with col9:
+            resolucion_sel = st.selectbox("Resolución", [""] + sorted(df_busqueda["resolucion"].dropna().unique()))
+        with col10:
+            resultado_sel = st.selectbox("Resultado", [""] + sorted(df_busqueda["resultado"].dropna().unique()))
+
+
+        if filtro_usuario and filtro_localizador:
+            filtrado = df_busqueda[
+                (df_busqueda["nombre_usuario"] == usuario_sel) &
+                (df_busqueda["localizador"] == localizador_sel)
+            ]
+        elif filtro_usuario:
+            filtrado = df_busqueda[df_busqueda["nombre_usuario"] == usuario_sel]
+        elif filtro_localizador:
+            filtrado = df_busqueda[df_busqueda["localizador"] == localizador_sel]
+        else:
+            filtrado = df_busqueda.copy()  # Mostrar todo si no se completa ningún filtro
+
         
-with st.expander("🎛️ Filtros", expanded=False):
-    col3, col4, col5 = st.columns(3)
-    with col3:
-        momento_sel = st.selectbox("Momento del Viaje", [""] + sorted(df_busqueda["momento_viaje"].dropna().unique()))
-    with col4:
-        operador_sel = st.selectbox("Operador", [""] + sorted(df_busqueda["operador"].dropna().unique()))
-    with col5:
-        ciudad_sel = st.selectbox("Ciudad", [""] + sorted(df_busqueda["ciudad"].dropna().unique()))
-
-    col6, col7, col8 = st.columns(3)
-    with col6:
-        tipo_contacto_sel = st.selectbox("Tipo de Contacto", [""] + sorted(df_busqueda["tipo_contacto"].dropna().unique()))
-    with col7:
-        area_sel = st.selectbox("Área Relacionada", [""] + sorted(df_busqueda["area"].dropna().unique()))
-    with col8:
-        trayecto_sel = st.selectbox("Trayecto", [""] + sorted(df_busqueda["trayecto"].dropna().unique()))
-
-    tipo_traslado_sel = ""
-    hotel_sel = ""
-    if area_sel.strip() == "Traslados/Transfers":
-        tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
-    if area_sel.strip() == "Hotel":
-        hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
-
-    col9, col10 = st.columns(2)
-    with col9:
-        resolucion_sel = st.selectbox("Resolución", [""] + sorted(df_busqueda["resolucion"].dropna().unique()))
-    with col10:
-        resultado_sel = st.selectbox("Resultado", [""] + sorted(df_busqueda["resultado"].dropna().unique()))
-
+        if momento_sel:
+            filtrado = filtrado[filtrado["momento_viaje"] == momento_sel]
+        if operador_sel:
+            filtrado = filtrado[filtrado["operador"] == operador_sel]
+        if ciudad_sel:
+            filtrado = filtrado[filtrado["ciudad"] == ciudad_sel]
+        if tipo_contacto_sel:
+            filtrado = filtrado[filtrado["tipo_contacto"] == tipo_contacto_sel]
+        if area_sel:
+            filtrado = filtrado[filtrado["area"] == area_sel]
+        if tipo_traslado_sel:
+            filtrado = filtrado[filtrado["tipo_traslado"] == tipo_traslado_sel]
+        if hotel_sel:
+            filtrado = filtrado[filtrado["hotel"] == hotel_sel]
+        if trayecto_sel:
+            filtrado = filtrado[filtrado["trayecto"] == trayecto_sel]
+        if resolucion_sel:
+            filtrado = filtrado[filtrado["resolucion"] == resolucion_sel]
+        if resultado_sel:
+            filtrado = filtrado[filtrado["resultado"] == resultado_sel]
 
         # --------- Mostrar resultados ---------
         if not filtrado.empty:
