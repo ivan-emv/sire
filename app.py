@@ -82,6 +82,7 @@ with st.form(key="form_datos_generales"):
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
     with col2:
+        ciudad = st.selectbox("Ciudad", CIUDADES)
         nombre_usuario = st.selectbox("Nombre del Usuario", USUARIOS)
         operador = st.selectbox("Operador", OPERADORES)
 
@@ -90,6 +91,7 @@ with st.form(key="form_datos_generales"):
         st.session_state.datos_generales = {
             "fecha_inicio": fecha_formateada,
             "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "ciudad": ciudad,
             "momento_viaje": momento_viaje,
             "localizador": localizador,
             "nombre_usuario": nombre_usuario,
