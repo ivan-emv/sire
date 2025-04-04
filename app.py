@@ -29,6 +29,12 @@ def init_session():
 init_session()
 
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
+from PIL import Image
+
+# Cargar y mostrar el logo de Europamundo
+logo = Image.open("a1.png")
+st.image(logo, width=300)
+
 st.title("Gestión de Incidencias - EMV SIRE 2025")
 
 # --------- Selector de Modo ---------
