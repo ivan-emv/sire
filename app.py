@@ -294,7 +294,7 @@ elif modo == "🔍 Búsqueda de Registros":
 
         col1, col2 = st.columns(2)
         with col1:
-            usuario_sel = st.selectbox("Selecciona el Usuario", [""] + list(usuarios))
+            usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
             localizador_sel = st.text_input("Escribe el Localizador")
 
