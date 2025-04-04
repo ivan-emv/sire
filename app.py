@@ -15,7 +15,7 @@ def generar_encabezados_google_sheets():
 
     # Encabezados alineados con los campos del formulario
     encabezados = [
-        "fecha_inicio", "fecha_registro", "momento_viaje", "localizador", "nombre_usuario", "operador",
+        "fecha_inicio", "fecha_registro", "momento_viaje", "localizador", "nombre_usuario", "operador", "ciudad",
         "tipo_contacto", "area", "hotel", "tipo_traslado", "trayecto", "guia",
         "tipo_incidencia", "comentario", "resolucion", "monto", "resultado"
     ]
