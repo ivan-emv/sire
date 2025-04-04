@@ -442,18 +442,3 @@ elif modo == "🛠️ Gestión de Registros" and st.session_state.admin_autentic
         st.success(f"Se encontraron {len(df_admin)} registros en la base de datos.")
         st.dataframe(df_admin, use_container_width=True)
         st.info("🧱 Próxima fase: edición en línea o eliminación de registros.")
-        # --------- Edición de Registros ---------
-        st.subheader("✏️ Editar Registro")
-        index_editar = st.number_input("Número de fila a editar", min_value=1, max_value=len(df_admin), step=1) - 1
-
-        if 0 <= index_editar < len(df_admin):
-            registro_original = df_admin.iloc[index_editar]
-            with st.form("form_editar_registro"):
-                columnas = df_admin.columns.tolist()
-                nuevos_valores = {}
-                for campo in columnas:
-                    nuevos_valores[campo] = st.text_input(f"{campo}", value=str(registro_original[campo]))
-                if st.form_submit_button("💾 Guardar Cambios"):
-                    hoja_admin.update(f"A{index_editar + 2}:{chr(65 + len(columnas) - 1)}{index_editar + 2}", [list(nuevos_valores.values())])
-                    st.success("✅ Registro actualizado correctamente. Recarga la página para ver los cambios reflejados.")
-    
