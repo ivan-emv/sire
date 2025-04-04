@@ -198,8 +198,15 @@ if st.session_state.datos_generales:
         st.session_state.form_counter += 1
         st.rerun()
 
+    
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
+
+        try:
+            guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
+        except Exception as e:
+            st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
         st.markdown("---")
         st.subheader("Resumen del Registro")
         st.write("**Datos generales:**", st.session_state.datos_generales)
