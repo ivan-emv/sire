@@ -32,8 +32,9 @@ st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
 st.title("📝 Formulario de Incidencias EMV-SIRE 2025")
 
 
-# --------- Función para guardar en Google Sheets ---------
-def guardar_en_google_sheets(datos_generales, lista_incidencias):
+# --------- Cargar bases desde Google Sheets ---------
+@st.cache_data(show_spinner=False)
+def cargar_datos_desde_google_sheets():
     import gspread
     from oauth2client.service_account import ServiceAccountCredentials
 
@@ -41,12 +42,25 @@ def guardar_en_google_sheets(datos_generales, lista_incidencias):
     creds_dict = st.secrets["gcp_service_account"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    sheet = client.open_by_key("1kBLQAdhYbnP8HTUgpr_rmmGEaOdyMU2tI97ogegrGxY").worksheet("PRUEBA")
-    headers = sheet.row_values(1)
-    for incidencia in lista_incidencias:
-        fila = {**datos_generales, **incidencia}
-        row = [fila.get(col, "") for col in headers]
-        sheet.append_row(row)
+
+    sheet_id = "1FyWpAjXMkuOW4TM71Z521lFyTX6nUQ8hNE8RGY3cnS4"
+    datos = {}
+    for nombre in ["Ciudades", "Hoteles", "Guias", "Operadores", "Trayectos", "Usuarios"]:
+        worksheet = client.open_by_key(sheet_id).worksheet(nombre)
+        datos[nombre] = worksheet.get_all_records()
+
+    return datos
+
+# Cargar los datos
+datos_bd = cargar_datos_desde_google_sheets()
+
+# Preparar los listados con los formatos solicitados
+USUARIOS = [u["Nombre"] for u in datos_bd["Usuarios"] if "Nombre" in u]
+CIUDADES = [c["Ciudad"] for c in datos_bd["Ciudades"] if "Ciudad" in c]
+HOTELES = [f"{h['Ciudad']} - {h['Nombre Hotel']}" for h in datos_bd["Hoteles"] if "Ciudad" in h and "Nombre Hotel" in h]
+GUIAS = [g["Nombre del Guía"] for g in datos_bd["Guias"] if "Nombre del Guía" in g]
+OPERADORES = [f"{o['País']} - {o['Nombre del Operador']}" for o in datos_bd["Operadores"] if "País" in o and "Nombre del Operador" in o]
+TRAYECTOS = [t["Trayecto"] for t in datos_bd["Trayectos"] if "Trayecto" in t]
 
 
 # --------- Datos Generales ---------
@@ -184,13 +198,6 @@ if st.session_state.datos_generales:
 
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
-
-        try:
-            guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
-            st.success("✅ Los datos han sido guardados correctamente en Google Sheets.")
-        except Exception as e:
-            st.error(f"❌ Error al guardar en Google Sheets: {e}")
-
         st.markdown("---")
         st.subheader("Resumen del Registro")
         st.write("**Datos generales:**", st.session_state.datos_generales)
