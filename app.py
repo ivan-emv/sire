@@ -3,11 +3,6 @@ import datetime
 import re
 
 # --------- Datos simulados ---------
-USUARIOS = ["Usuario A", "Usuario B", "Usuario C"]
-OPERADORES = ["Operador A", "Operador B", "Operador C"]
-HOTELES = ["Hotel Alpha", "Hotel Beta", "Hotel Gamma"]
-GUIAS = ["Guía 1", "Guía 2", "Guía 3"]
-TRAYECTOS = ["Trayecto Madrid - París", "Trayecto Roma - Florencia", "Trayecto Berlín - Praga"]
 RESOLUCIONES = [
     "Reembolso Parcial/Partial Reimbursement", "Reembolso Total/Total Reimbursement",
     "Compensación/Compensation", "Descuento Próximo Viaje/Next Trip Discount",
