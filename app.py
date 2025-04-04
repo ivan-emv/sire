@@ -60,7 +60,7 @@ if modo == "📝 Carga de Incidencias":
 
         sheet_id = "1FyWpAjXMkuOW4TM71Z521lFyTX6nUQ8hNE8RGY3cnS4"
         datos = {}
-        for nombre in ["Ciudades", "Hoteles", "Guias", "Operadores", "Trayectos", "Usuarios"]:
+        for nombre in ["Ciudades", "Hoteles", "Guias", "Operadores", "Trayectos", "Usuarios", "ADMIN"]:
             worksheet = client.open_by_key(sheet_id).worksheet(nombre)
             datos[nombre] = worksheet.get_all_records()
 
@@ -71,6 +71,34 @@ if modo == "📝 Carga de Incidencias":
         st.cache_data.clear()
 
     datos_bd = cargar_datos_desde_google_sheets()
+
+    # --------- Autenticación de Administrador ---------
+    def autenticar_admin(usuario, password):
+        admin_users = datos_bd.get("ADMIN", [])
+        for admin in admin_users:
+            if admin.get("Usuario") == usuario and admin.get("Password") == password:
+                return True
+        return False
+
+    if "admin_autenticado" not in st.session_state:
+        st.session_state.admin_autenticado = False
+    if "admin_usuario" not in st.session_state:
+        st.session_state.admin_usuario = ""
+
+    if not st.session_state.admin_autenticado:
+        with st.sidebar.expander("🔐 Acceso Administrador"):
+            admin_user = st.text_input("Usuario")
+            admin_pass = st.text_input("Contraseña", type="password")
+            if st.button("Iniciar Sesión"):
+                if autenticar_admin(admin_user, admin_pass):
+                    st.session_state.admin_autenticado = True
+                    st.session_state.admin_usuario = admin_user
+                    st.success(f"Acceso concedido. Bienvenido, {admin_user}.")
+                else:
+                    st.error("Credenciales incorrectas.")
+    else:
+        st.sidebar.success(f"🔓 Acceso Administrador: {st.session_state.admin_usuario}")
+
 
     # Preparar los listados con los formatos solicitados
     USUARIOS = [u["Nombre"] for u in datos_bd["Usuarios"] if "Nombre" in u]
