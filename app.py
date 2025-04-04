@@ -57,9 +57,9 @@ datos_bd = cargar_datos_desde_google_sheets()
 # Preparar los listados con los formatos solicitados
 USUARIOS = [u["Nombre"] for u in datos_bd["Usuarios"] if "Nombre" in u]
 CIUDADES = [c["Ciudad"] for c in datos_bd["Ciudades"] if "Ciudad" in c]
-HOTELES = [f"{h['Ciudad']} - {h['Nombre Hotel']}" for h in datos_bd["Hoteles"] if "Ciudad" in h and "Nombre Hotel" in h]
-GUIAS = [g["Nombre del Guía"] for g in datos_bd["Guias"] if "Nombre del Guía" in g]
-OPERADORES = [f"{o['País']} - {o['Nombre del Operador']}" for o in datos_bd["Operadores"] if "País" in o and "Nombre del Operador" in o]
+HOTELES = [h["Nombre Hotel"] for h in datos_bd["Hoteles"] if "Nombre Hotel" in h]
+GUIAS = [g["Nombre del Guia"] for g in datos_bd["Guias"] if "Nombre del Guia" in g]
+OPERADORES = [o["Nombre del Operador"] for o in datos_bd["Operadores"] if "Nombre del Operador" in o]
 TRAYECTOS = [t["Trayecto"] for t in datos_bd["Trayectos"] if "Trayecto" in t]
 
 
