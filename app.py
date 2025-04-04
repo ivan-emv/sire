@@ -440,77 +440,20 @@ elif modo == "🛠️ Gestión de Registros" and st.session_state.admin_autentic
         st.warning("No hay registros en la base de datos.")
     else:
         st.success(f"Se encontraron {len(df_admin)} registros en la base de datos.")
-
-        # --------- Filtros similares a 'Búsqueda de Registros' ---------
-        usuarios = sorted(df_admin["nombre_usuario"].dropna().unique())
-        localizadores = sorted(df_admin["localizador"].dropna().unique())
-
-        col1, col2 = st.columns(2)
-        with col1:
-            usuario_sel = st.selectbox("Selecciona el Usuario", [""] + list(usuarios), key="admin_usuario")
-        with col2:
-            localizador_sel = st.text_input("Escribe el Localizador", key="admin_localizador")
-
-        filtro_usuario = usuario_sel.strip() != ""
-        filtro_localizador = localizador_sel.strip() != ""
-
-        col3, col4, col5 = st.columns(3)
-        with col3:
-            momento_sel = st.selectbox("Momento del Viaje", [""] + sorted(df_admin["momento_viaje"].dropna().unique()), key="admin_momento")
-        with col4:
-            operador_sel = st.selectbox("Operador", [""] + sorted(df_admin["operador"].dropna().unique()), key="admin_operador")
-        with col5:
-            ciudad_sel = st.selectbox("Ciudad", [""] + sorted(df_admin["ciudad"].dropna().unique()), key="admin_ciudad")
-
-        col6, col7, col8 = st.columns(3)
-        with col6:
-            tipo_contacto_sel = st.selectbox("Tipo de Contacto", [""] + sorted(df_admin["tipo_contacto"].dropna().unique()), key="admin_tipo_contacto")
-        with col7:
-            area_sel = st.selectbox("Área Relacionada", [""] + sorted(df_admin["area"].dropna().unique()), key="admin_area")
-        with col8:
-            trayecto_sel = st.selectbox("Trayecto", [""] + sorted(df_admin["trayecto"].dropna().unique()), key="admin_trayecto")
-
-        tipo_traslado_sel = ""
-        hotel_sel = ""
-        if area_sel.strip() == "Traslados/Transfers":
-            tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_admin["tipo_traslado"].dropna().unique()), key="admin_tipo_traslado")
-        if area_sel.strip() == "Hoteles":
-            hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_admin["hotel"].dropna().unique()), key="admin_hotel")
-
-        col9, col10 = st.columns(2)
-        with col9:
-            resolucion_sel = st.selectbox("Resolución", [""] + sorted(df_admin["resolucion"].dropna().unique()), key="admin_resolucion")
-        with col10:
-            resultado_sel = st.selectbox("Resultado", [""] + sorted(df_admin["resultado"].dropna().unique()), key="admin_resultado")
-
-        filtrado = df_admin.copy()
-        if filtro_usuario:
-            filtrado = filtrado[filtrado["nombre_usuario"] == usuario_sel]
-        if filtro_localizador:
-            filtrado = filtrado[filtrado["localizador"] == localizador_sel]
-        if momento_sel:
-            filtrado = filtrado[filtrado["momento_viaje"] == momento_sel]
-        if operador_sel:
-            filtrado = filtrado[filtrado["operador"] == operador_sel]
-        if ciudad_sel:
-            filtrado = filtrado[filtrado["ciudad"] == ciudad_sel]
-        if tipo_contacto_sel:
-            filtrado = filtrado[filtrado["tipo_contacto"] == tipo_contacto_sel]
-        if area_sel:
-            filtrado = filtrado[filtrado["area"] == area_sel]
-        if tipo_traslado_sel:
-            filtrado = filtrado[filtrado["tipo_traslado"] == tipo_traslado_sel]
-        if hotel_sel:
-            filtrado = filtrado[filtrado["hotel"] == hotel_sel]
-        if trayecto_sel:
-            filtrado = filtrado[filtrado["trayecto"] == trayecto_sel]
-        if resolucion_sel:
-            filtrado = filtrado[filtrado["resolucion"] == resolucion_sel]
-        if resultado_sel:
-            filtrado = filtrado[filtrado["resultado"] == resultado_sel]
-
-        st.markdown("---")
-        st.dataframe(filtrado, use_container_width=True)
-
         st.dataframe(df_admin, use_container_width=True)
         st.info("🧱 Próxima fase: edición en línea o eliminación de registros.")
+        # --------- Edición de Registros ---------
+        st.subheader("✏️ Editar Registro")
+        index_editar = st.number_input("Número de fila a editar", min_value=1, max_value=len(df_admin), step=1) - 1
+
+        if 0 <= index_editar < len(df_admin):
+            registro_original = df_admin.iloc[index_editar]
+            with st.form("form_editar_registro"):
+                columnas = df_admin.columns.tolist()
+                nuevos_valores = {}
+                for campo in columnas:
+                    nuevos_valores[campo] = st.text_input(f"{campo}", value=str(registro_original[campo]))
+                if st.form_submit_button("💾 Guardar Cambios"):
+                    hoja_admin.update(f"A{index_editar + 2}:{chr(65 + len(columnas) - 1)}{index_editar + 2}", [list(nuevos_valores.values())])
+                    st.success("✅ Registro actualizado correctamente. Recarga la página para ver los cambios reflejados.")
+    
