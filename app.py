@@ -3,6 +3,11 @@ import datetime
 import re
 
 # --------- Datos simulados ---------
+USUARIOS = ["Usuario A", "Usuario B", "Usuario C"]
+OPERADORES = ["Operador A", "Operador B", "Operador C"]
+HOTELES = ["Hotel Alpha", "Hotel Beta", "Hotel Gamma"]
+GUIAS = ["Guía 1", "Guía 2", "Guía 3"]
+TRAYECTOS = ["Trayecto Madrid - París", "Trayecto Roma - Florencia", "Trayecto Berlín - Praga"]
 RESOLUCIONES = [
     "Reembolso Parcial/Partial Reimbursement", "Reembolso Total/Total Reimbursement",
     "Compensación/Compensation", "Descuento Próximo Viaje/Next Trip Discount",
@@ -150,7 +155,7 @@ if modo == "📝 Carga de Incidencias":
         if tipo_contacto == "Información":
             area_info = st.selectbox("Área Relacionada", [
                 "Traslados/Transfers", "Hotel", "Seguro/Insurance", "Itinerario/Itinerary",
-                "Equipaje/Luggage", "Felicitación Circuito", "Guías/Guides",
+                "Equipaje/Luggage", "Felicitación Circuito", "Info Guía/Guide Info",
                 "Punto Encuentro/Meeting Point", "Comercial/Commercial", "Enfermedad/Sickness",
                 "Opcionales/Optional Tours", "Otros/Other"], key=f"area_info_{idx}")
             incidencia["area"] = area_info
@@ -169,7 +174,7 @@ if modo == "📝 Carga de Incidencias":
             area_reclamo = st.selectbox("Área Relacionada", ["Hotel", "Guías/Guides", "Traslados/Transfers", "Generales/General"], key=f"area_reclamo_{idx}")
             incidencia["area"] = area_reclamo
     
-            if area_reclamo == "Hoteles":
+            if area_reclamo == "Hotel":
                 incidencia["tipo_incidencia"] = st.selectbox("Tipo de Incidencia", [
                     "Desayuno/Breakfast", "Limpieza-Bichos/Cleanliness-Bugs", "Comodidad/Comfort",
                     "Ubicación/Location", "Mantenimiento General/Overall Maintenance",
@@ -178,7 +183,7 @@ if modo == "📝 Carga de Incidencias":
                 incidencia["hotel"] = st.selectbox("Hotel", HOTELES, key=f"hotel_reclamo_{idx}")
                 incidencia["comentario"] = st.text_area("Comentario Hotel", max_chars=500, key=f"comentario_hotel_{idx}")
     
-            elif area_reclamo == "Guías":
+            elif area_reclamo == "Guías/Guides":
                 incidencia["tipo_incidencia"] = st.selectbox("Tipo de Incidencia", [
                     "Actitud/Attitude", "Felicitación/Congratulation", "Conocimiento/Knowledge",
                     "Idioma/Language", "Guía Local - Mal Servicio/Local Guide - Poor Service",
@@ -188,7 +193,7 @@ if modo == "📝 Carga de Incidencias":
                 incidencia["guia"] = st.selectbox("Nombre del Guía", GUIAS, key=f"guia_{idx}")
                 incidencia["comentario"] = st.text_area("Comentario Guía", max_chars=500, key=f"comentario_guia_{idx}")
     
-            elif area_reclamo == "Traslados":
+            elif area_reclamo == "Traslados/Transfers":
                 tipo_incidencia = st.selectbox("Tipo de Incidencia", [
                     "TRF - No Show - PAX", "TRF - No Show - Transfer", "TRF - Pendiente Datos/Pending data",
                     "TRF - Error EMV/EMV´s error", "TRF - Actitud Chófer/Driver´s Attitude",
@@ -204,7 +209,7 @@ if modo == "📝 Carga de Incidencias":
                     incidencia["tipo_traslado"] = st.selectbox("Tipo de Traslado", ["Llegada/Arrival", "Salida/Departure", "Llegada/Arrival-Pto", "Salida/Departure-Pto"], key=f"tipo_traslado_trf_{idx}")
                 incidencia["comentario"] = st.text_area("Comentario Traslados", max_chars=500, key=f"comentario_traslados_{idx}")
     
-            elif area_reclamo == "Generales":
+            elif area_reclamo == "Generales/General":
                 tipo_incidencia = st.selectbox("Tipo de Incidencia", [
                     "Itinerario - Fuerza Mayor/Force Majeure", "Itinerario - Muchos Idiomas/Several Languages",
                     "Itinerario - Parada en Tiendas/Shop Stops", "Itinerario - Itinerario no Seguido/Unfollowed Timetable",
@@ -317,7 +322,7 @@ elif modo == "🔍 Búsqueda de Registros":
         # Filtros condicionales según el área
         tipo_traslado_sel = ""
         hotel_sel = ""
-        if area_sel.strip() == "Traslados":
+        if area_sel.strip() == "Traslados/Transfers":
             tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
         if area_sel.strip() == "Hoteles":
             hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
