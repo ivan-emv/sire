@@ -60,7 +60,7 @@ with col_titulo:
 modo = st.sidebar.radio("Selecciona una opción", [
     "📝 Carga de Incidencias",
     "🔍 Búsqueda de Registros"
-] + (["🛠️ Gestión de Registros"] if st.session_state.admin_autenticado else []))
+] + (["🛠️ Gestión de Registros"] if st.session_state.get("admin_autenticado", False) else []), key="modo_selector")
 
 if st.session_state.get("modo_activo", modo) == "📝 Carga de Incidencias":
     
