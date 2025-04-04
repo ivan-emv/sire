@@ -310,9 +310,10 @@ if modo == "📝 Carga de Incidencias":
     
     # --------- Búsqueda de Registros ---------
 elif modo == "🔍 Búsqueda de Registros":
+
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
     with st.expander("🔎 FILTROS", expanded=False):
-        st.write("Opciones de filtro")
+    st.write("Opciones de filtro")
 
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
 
@@ -347,36 +348,7 @@ elif modo == "🔍 Búsqueda de Registros":
         filtro_usuario = usuario_sel.strip() != ""
         filtro_localizador = localizador_sel.strip() != ""
 
-        # --------- Filtros adicionales ---------
-        col3, col4, col5 = st.columns(3)
-        with col3:
-            momento_sel = st.selectbox("Momento del Viaje", [""] + sorted(df_busqueda["momento_viaje"].dropna().unique()))
-        with col4:
-            operador_sel = st.selectbox("Operador", [""] + sorted(df_busqueda["operador"].dropna().unique()))
-        with col5:
-            ciudad_sel = st.selectbox("Ciudad", [""] + sorted(df_busqueda["ciudad"].dropna().unique()))
-
-        col6, col7, col8 = st.columns(3)
-        with col6:
-            tipo_contacto_sel = st.selectbox("Tipo de Contacto", [""] + sorted(df_busqueda["tipo_contacto"].dropna().unique()))
-        with col7:
-            area_sel = st.selectbox("Área Relacionada", [""] + sorted(df_busqueda["area"].dropna().unique()))
-        with col8:
-            trayecto_sel = st.selectbox("Trayecto", [""] + sorted(df_busqueda["trayecto"].dropna().unique()))
-
-        # Filtros condicionales según el área
-        tipo_traslado_sel = ""
-        hotel_sel = ""
-        if area_sel.strip() == "Traslados/Transfers":
-            tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
-        if area_sel.strip() == "Hoteles":
-            hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
-
-        col9, col10 = st.columns(2)
-        with col9:
-            resolucion_sel = st.selectbox("Resolución", [""] + sorted(df_busqueda["resolucion"].dropna().unique()))
-        with col10:
-            resultado_sel = st.selectbox("Resultado", [""] + sorted(df_busqueda["resultado"].dropna().unique()))
+        # --------- Filtros adicionales ---------.unique()))
 
 
         if filtro_usuario and filtro_localizador:
@@ -426,7 +398,7 @@ elif modo == "🔍 Búsqueda de Registros":
 elif modo == "🛠️ Gestión de Registros" and st.session_state.admin_autenticado:
     st.header("🛠️ Gestión de Registros (Administrador)")
     with st.expander("🔎 FILTROS", expanded=False):
-        st.write("Opciones de filtro")
+    st.write("Opciones de filtro")
 
     st.header("🛠️ Gestión de Registros (Administrador)")
 
