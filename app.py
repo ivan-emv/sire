@@ -29,6 +29,17 @@ def init_session():
 init_session()
 
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
+
+# 🔧 Ocultar la barra superior y el menú de Streamlit
+hide_streamlit_style = """
+    <style>
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 col_logo, col_titulo = st.columns([1, 4])
 with col_logo:
     st.image("a1.png", width=500)
@@ -260,6 +271,7 @@ if modo == "📝 Carga de Incidencias":
 elif modo == "🔍 Búsqueda de Registros":
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
 
+    @st.cache_data(show_spinner=False)
     def cargar_datos_busqueda():
         import gspread
         from oauth2client.service_account import ServiceAccountCredentials
@@ -282,7 +294,7 @@ elif modo == "🔍 Búsqueda de Registros":
 
         col1, col2 = st.columns(2)
         with col1:
-            usuario_sel = st.selectbox("Selecciona el Usuario", [""] + list(usuarios))
+            usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
             localizador_sel = st.text_input("Escribe el Localizador")
 
@@ -300,7 +312,7 @@ elif modo == "🔍 Búsqueda de Registros":
         elif filtro_localizador:
             filtrado = df_busqueda[df_busqueda["localizador"] == localizador_sel]
         else:
-            filtrado = df_busqueda.copy()  # Mostrar todo si no se completa ningún filtro
+            filtrado = pd.DataFrame()  # No mostrar nada si no se completa ningún filtro
 
         # --------- Mostrar resultados ---------
         if not filtrado.empty:
