@@ -281,15 +281,27 @@ elif modo == "🔍 Búsqueda de Registros":
         with col1:
             usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
-            localizador_sel = st.text_input("Escribe el Localizador")
+            localizador_sel = st.text_input("Escribe el Localizador", localizadores)
 
-        filtrado = df_busqueda[
-            (df_busqueda["nombre_usuario"] == usuario_sel) &
-            (df_busqueda["localizador"] == localizador_sel)
-        ]
+        # --------- Filtrado flexible por Usuario y/o Localizador ---------
+        filtro_usuario = usuario_sel.strip() != ""
+        filtro_localizador = localizador_sel.strip() != ""
 
+        if filtro_usuario and filtro_localizador:
+            filtrado = df_busqueda[
+                (df_busqueda["nombre_usuario"] == usuario_sel) &
+                (df_busqueda["localizador"] == localizador_sel)
+            ]
+        elif filtro_usuario:
+            filtrado = df_busqueda[df_busqueda["nombre_usuario"] == usuario_sel]
+        elif filtro_localizador:
+            filtrado = df_busqueda[df_busqueda["localizador"] == localizador_sel]
+        else:
+            filtrado = pd.DataFrame()  # No mostrar nada si no se completa ningún filtro
+
+        # --------- Mostrar resultados ---------
         if not filtrado.empty:
-            st.success(f"Se encontraron {len(filtrado)} registros para el usuario '{usuario_sel}' y localizador '{localizador_sel}'.")
+            st.success(f"Se encontraron {len(filtrado)} registros.")
             st.dataframe(filtrado, use_container_width=True)
         else:
             st.info("No se encontraron registros con esos criterios.")
