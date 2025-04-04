@@ -281,7 +281,7 @@ elif modo == "🔍 Búsqueda de Registros":
         with col1:
             usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
-            localizador_sel = st.text_input("Escribe el Localizador", localizadores)
+            localizador_sel = st.text_input("Escribe el Localizador")
 
         # --------- Filtrado flexible por Usuario y/o Localizador ---------
         filtro_usuario = usuario_sel.strip() != ""
