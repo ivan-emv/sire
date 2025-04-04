@@ -41,7 +41,12 @@ with col_titulo:
     st.markdown("<h1 style='margin-top: 25px;'>Gestión de Incidencias - EMV SIRE 2025</h1>", unsafe_allow_html=True)
 
 # --------- Selector de Modo ---------
-modo = st.sidebar.radio("Selecciona una opción", ["📝 Carga de Incidencias", "🔍 Búsqueda de Registros"])
+
+modo = st.sidebar.radio("Selecciona una opción", [
+    "📝 Carga de Incidencias",
+    "🔍 Búsqueda de Registros"
+] + (["🛠️ Gestión de Registros"] if st.session_state.admin_autenticado else []))
+
 if modo == "📝 Carga de Incidencias":
     
     
@@ -408,3 +413,30 @@ elif modo == "🔍 Búsqueda de Registros":
             st.dataframe(filtrado, use_container_width=True)
         else:
             st.info("No se encontraron registros con esos criterios.")
+
+
+
+# --------- Gestión de Registros (solo para administradores) ---------
+elif modo == "🛠️ Gestión de Registros" and st.session_state.admin_autenticado:
+    st.header("🛠️ Gestión de Registros (Administrador)")
+
+    def cargar_datos_admin():
+        import gspread
+        from oauth2client.service_account import ServiceAccountCredentials
+        import pandas as pd
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        creds_dict = st.secrets["gcp_service_account"]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        hoja = client.open_by_key("1aaGedbCfPfLqktmNQEVoiC0cphs-iKlmz9IKGcKNvUE").worksheet("DATOS")
+        datos = hoja.get_all_records()
+        return pd.DataFrame(datos), hoja
+
+    df_admin, hoja_admin = cargar_datos_admin()
+
+    if df_admin.empty:
+        st.warning("No hay registros en la base de datos.")
+    else:
+        st.success(f"Se encontraron {len(df_admin)} registros en la base de datos.")
+        st.dataframe(df_admin, use_container_width=True)
+        st.info("🧱 Próxima fase: edición en línea o eliminación de registros.")
