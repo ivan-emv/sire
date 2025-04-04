@@ -2,19 +2,6 @@ import streamlit as st
 import datetime
 import re
 
-st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
-
-# 🔧 Ocultar la barra superior y el menú de Streamlit
-hide_streamlit_style = """
-    <style>
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-    </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-
 # --------- Datos simulados ---------
 USUARIOS = ["Usuario A", "Usuario B", "Usuario C"]
 OPERADORES = ["Operador A", "Operador B", "Operador C"]
