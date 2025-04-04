@@ -31,6 +31,24 @@ init_session()
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
 st.title("📝 Formulario de Incidencias EMV-SIRE 2025")
 
+
+# --------- Función para guardar en Google Sheets ---------
+def guardar_en_google_sheets(datos_generales, lista_incidencias):
+    import gspread
+    from oauth2client.service_account import ServiceAccountCredentials
+
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds_dict = st.secrets["gcp_service_account"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open_by_key("1kBLQAdhYbnP8HTUgpr_rmmGEaOdyMU2tI97ogegrGxY").worksheet("PRUEBA")
+    headers = sheet.row_values(1)
+    for incidencia in lista_incidencias:
+        fila = {**datos_generales, **incidencia}
+        row = [fila.get(col, "") for col in headers]
+        sheet.append_row(row)
+
+
 # --------- Datos Generales ---------
 st.subheader("Datos Generales del Servicio")
 with st.form(key="form_datos_generales"):
@@ -166,6 +184,13 @@ if st.session_state.datos_generales:
 
     if col2.button("✅ Finalizar"):
         st.session_state.incidencias.append(incidencia)
+
+        try:
+            guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
+            st.success("✅ Los datos han sido guardados correctamente en Google Sheets.")
+        except Exception as e:
+            st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
         st.markdown("---")
         st.subheader("Resumen del Registro")
         st.write("**Datos generales:**", st.session_state.datos_generales)
