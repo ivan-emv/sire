@@ -311,6 +311,10 @@ if modo == "📝 Carga de Incidencias":
     # --------- Búsqueda de Registros ---------
 elif modo == "🔍 Búsqueda de Registros":
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
+    with st.expander("🔎 FILTROS", expanded=False):
+    st.write("Opciones de filtro")
+
+    st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
 
     # @st.cache_data (eliminado para forzar recarga dinámica)(show_spinner=False)
     def cargar_datos_busqueda():
@@ -420,6 +424,10 @@ elif modo == "🔍 Búsqueda de Registros":
 
 # --------- Gestión de Registros (solo para administradores) ---------
 elif modo == "🛠️ Gestión de Registros" and st.session_state.admin_autenticado:
+    st.header("🛠️ Gestión de Registros (Administrador)")
+    with st.expander("🔎 FILTROS", expanded=False):
+    st.write("Opciones de filtro")
+
     st.header("🛠️ Gestión de Registros (Administrador)")
 
     def cargar_datos_admin():
