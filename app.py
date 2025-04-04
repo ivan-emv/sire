@@ -23,7 +23,18 @@ def init_session():
     if "admin_autenticado" not in st.session_state:
         st.session_state.admin_autenticado = False
 
+init_session():
+    if "incidencias" not in st.session_state:
+        st.session_state.incidencias = []
+    if "datos_generales" not in st.session_state:
+        st.session_state.datos_generales = {}
+    if "form_counter" not in st.session_state:
+        st.session_state.form_counter = 0
+    if "admin_autenticado" not in st.session_state:
+        st.session_state.admin_autenticado = False
+
 init_session()
+:
     if "incidencias" not in st.session_state:
         st.session_state.incidencias = []
     if "datos_generales" not in st.session_state:
