@@ -82,9 +82,9 @@ with st.form(key="form_datos_generales"):
         momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
         localizador = st.text_input("Localizador (código único de reserva)")
     with col2:
+        ciudad = st.selectbox("Ciudad", CIUDADES)
         nombre_usuario = st.selectbox("Nombre del Usuario", USUARIOS)
         operador = st.selectbox("Operador", OPERADORES)
-        ciudad = st.selectbox("Ciudad", CIUDADES)
 
     submitted_gen = st.form_submit_button("Confirmar datos generales")
     if submitted_gen:
