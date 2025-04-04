@@ -34,7 +34,6 @@ init_session()
         st.session_state.admin_autenticado = False
 
 init_session()
-:
     if "incidencias" not in st.session_state:
         st.session_state.incidencias = []
     if "datos_generales" not in st.session_state:
