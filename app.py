@@ -22,15 +22,7 @@ def init_session():
     if "incidencias" not in st.session_state:
         st.session_state.incidencias = []
     if "datos_generales" not in st.session_state:
-                st.session_state.datos_generales = {
-            "fecha_inicio": fecha_formateada,
-            "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-            "momento_viaje": momento_viaje,
-            "localizador": localizador,
-            "ciudad": ciudad,
-            "nombre_usuario": nombre_usuario,
-            "operador": operador
-        }}
+        st.session_state.datos_generales = {}
     if "form_counter" not in st.session_state:
         st.session_state.form_counter = 0
 
@@ -96,15 +88,15 @@ with st.form(key="form_datos_generales"):
 
     submitted_gen = st.form_submit_button("Confirmar datos generales")
     if submitted_gen:
-                st.session_state.datos_generales = {
+        st.session_state.datos_generales = {
             "fecha_inicio": fecha_formateada,
             "fecha_registro": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "ciudad": ciudad,
             "momento_viaje": momento_viaje,
             "localizador": localizador,
-            "ciudad": ciudad,
             "nombre_usuario": nombre_usuario,
-            "operador": operador
-        }}
+            "operador": operador,
+        }
         st.success("✅ Datos generales registrados correctamente.")
 
 # --------- Registro de Incidencias ---------
