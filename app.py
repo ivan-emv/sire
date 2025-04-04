@@ -398,7 +398,7 @@ elif modo == "🔍 Búsqueda de Registros":
 elif modo == "🛠️ Gestión de Registros" and st.session_state.admin_autenticado:
     st.header("🛠️ Gestión de Registros (Administrador)")
     with st.expander("🔎 FILTROS", expanded=False):
-    st.write("Opciones de filtro")
+        st.write("Opciones de filtro")
 
     st.header("🛠️ Gestión de Registros (Administrador)")
 
