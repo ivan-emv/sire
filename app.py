@@ -29,13 +29,11 @@ def init_session():
 init_session()
 
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
-from PIL import Image
-
-# Cargar y mostrar el logo de Europamundo
-logo = Image.open("a1.png")
-st.image(logo, width=300)
-
-st.title("Gestión de Incidencias - EMV SIRE 2025")
+col_logo, col_titulo = st.columns([1, 4])
+with col_logo:
+    st.image("a1.png", width=500)
+with col_titulo:
+    st.markdown("<h1 style='margin-top: 25px;'>Gestión de Incidencias - EMV SIRE 2025</h1>", unsafe_allow_html=True)
 
 # --------- Selector de Modo ---------
 modo = st.sidebar.radio("Selecciona una opción", ["📝 Carga de Incidencias", "🔍 Búsqueda de Registros"])
