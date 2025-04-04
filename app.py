@@ -324,7 +324,7 @@ elif modo == "🔍 Búsqueda de Registros":
         hotel_sel = ""
         if area_sel.strip() == "Traslados/Transfers":
             tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
-        if area_sel.strip() == "Hoteles":
+        if area_sel.strip() == "Hotel":
             hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
 
         col9, col10 = st.columns(2)
