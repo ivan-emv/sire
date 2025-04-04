@@ -1,3 +1,4 @@
+st.set_page_config(page_title='Carga de Incidencias - EMV SIRE', layout='wide')
 import streamlit as st
 import datetime
 import re
@@ -36,7 +37,7 @@ if st.session_state.get("admin_autenticado", False):
 elif "modo_activo" in st.session_state and st.session_state["modo_activo"] == "🛠️ Gestión de Registros":
     st.session_state.modo_activo = "📝 Carga de Incidencias"
 
-st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
+
 
 # 🔧 Ocultar la barra superior y el menú de Streamlit
 hide_streamlit_style = """
