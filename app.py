@@ -281,7 +281,7 @@ elif modo == "🔍 Búsqueda de Registros":
         with col1:
             usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
-            localizador_sel = st.text_input("Selecciona el Localizador", localizadores)
+            localizador_sel = st.text_input("Escribe el Localizador", localizadores)
 
         filtrado = df_busqueda[
             (df_busqueda["nombre_usuario"] == usuario_sel) &
