@@ -249,17 +249,18 @@ if modo == "📝 Carga de Incidencias":
     
         
         
+        
         if col2.button("✅ Finalizar"):
-                        st.session_state.incidencias.append(incidencia)
-    
+            st.session_state.incidencias.append(incidencia)
+
             st.write("🧾 Datos generales:", st.session_state.datos_generales)
             st.write("📦 Incidencias:", st.session_state.incidencias)
-    
+
             try:
                 guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
             except Exception as e:
                 st.error(f"❌ Error al guardar en Google Sheets: {e}")
-    
+
             st.markdown("---")
             st.subheader("Resumen del Registro")
             st.write("**Datos generales:**", st.session_state.datos_generales)
@@ -267,6 +268,7 @@ if modo == "📝 Carga de Incidencias":
             st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
             st.session_state.clear()
             st.rerun()
+
     
     
     
