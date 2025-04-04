@@ -314,8 +314,8 @@ elif modo == "🔍 Búsqueda de Registros":
     with st.expander("🔎 FILTROS", expanded=False):
         st.write("Opciones de filtro")
 
-    with st.expander("🔎 FILTROS", expanded=False):
-    st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
+        with st.expander("🔎 FILTROS", expanded=False):
+        st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
     # @st.cache_data (eliminado para forzar recarga dinámica)(show_spinner=False)
     def cargar_datos_busqueda():
         import gspread
