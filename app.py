@@ -150,7 +150,7 @@ if modo == "📝 Carga de Incidencias":
         if tipo_contacto == "Información":
             area_info = st.selectbox("Área Relacionada", [
                 "Traslados/Transfers", "Hotel", "Seguro/Insurance", "Itinerario/Itinerary",
-                "Equipaje/Luggage", "Felicitación Circuito", "Info Guía/Guide Info",
+                "Equipaje/Luggage", "Felicitación Circuito", "Guías/Guides",
                 "Punto Encuentro/Meeting Point", "Comercial/Commercial", "Enfermedad/Sickness",
                 "Opcionales/Optional Tours", "Otros/Other"], key=f"area_info_{idx}")
             incidencia["area"] = area_info
@@ -166,7 +166,7 @@ if modo == "📝 Carga de Incidencias":
             incidencia["resolucion"] = st.selectbox("Resolución", RESOLUCIONES, key=f"resolucion_info_{idx}")
     
         elif tipo_contacto == "Reclamación":
-            area_reclamo = st.selectbox("Área Relacionada", ["Hoteles", "Guías", "Traslados", "Generales"], key=f"area_reclamo_{idx}")
+            area_reclamo = st.selectbox("Área Relacionada", ["Hotel", "Guías/Guides", "Traslados/Transfers", "Generales/General"], key=f"area_reclamo_{idx}")
             incidencia["area"] = area_reclamo
     
             if area_reclamo == "Hoteles":
