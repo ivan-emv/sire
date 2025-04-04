@@ -63,6 +63,30 @@ OPERADORES = [o["Nombre del Operador"] for o in datos_bd["Operadores"] if "Nombr
 TRAYECTOS = [t["Trayecto"] for t in datos_bd["Trayectos"] if "Trayecto" in t]
 
 
+# --------- Función para guardar en Google Sheets ---------
+def guardar_en_google_sheets(datos_generales, lista_incidencias):
+    import gspread
+    from oauth2client.service_account import ServiceAccountCredentials
+
+    try:
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        creds_dict = st.secrets["gcp_service_account"]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        sheet = client.open_by_key("1aaGedbCfPfLqktmNQEVoiC0cphs-iKlmz9IKGcKNvUE").worksheet("DATOS")
+        headers = [
+            "fecha_inicio", "fecha_registro", "momento_viaje", "localizador", "nombre_usuario",
+            "operador", "ciudad", "tipo_contacto", "area", "hotel", "tipo_traslado",
+            "trayecto", "guia", "tipo_incidencia", "comentario", "resolucion", "monto", "resultado"
+        ]
+        for incidencia in lista_incidencias:
+            fila = {**datos_generales, **incidencia}
+            row = [fila.get(col, "") for col in headers]
+            sheet.append_row(row)
+        st.success("✅ Los datos se guardaron correctamente en Google Sheets.")
+    except Exception as e:
+        st.error(f"❌ Error al guardar en Google Sheets: {e}")
+
 # --------- Datos Generales ---------
 st.subheader("Datos Generales del Servicio")
 with st.form(key="form_datos_generales"):
