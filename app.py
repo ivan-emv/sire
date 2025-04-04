@@ -271,7 +271,7 @@ if modo == "📝 Carga de Incidencias":
 elif modo == "🔍 Búsqueda de Registros":
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
 
-    @st.cache_data(show_spinner=False)
+    # @st.cache_data (eliminado para forzar recarga dinámica)(show_spinner=False)
     def cargar_datos_busqueda():
         import gspread
         from oauth2client.service_account import ServiceAccountCredentials
