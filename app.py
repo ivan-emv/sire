@@ -199,8 +199,13 @@ if st.session_state.datos_generales:
         st.rerun()
 
     
+    
     if col2.button("✅ Finalizar"):
+        st.warning("🧪 Entramos en el bloque Finalizar.")
         st.session_state.incidencias.append(incidencia)
+
+        st.write("🧾 Datos generales:", st.session_state.datos_generales)
+        st.write("📦 Incidencias:", st.session_state.incidencias)
 
         try:
             guardar_en_google_sheets(st.session_state.datos_generales, st.session_state.incidencias)
@@ -214,3 +219,4 @@ if st.session_state.datos_generales:
         st.success("✅ Registro finalizado. Puedes cerrar la ventana o comenzar un nuevo reporte.")
         st.session_state.clear()
         st.rerun()
+
