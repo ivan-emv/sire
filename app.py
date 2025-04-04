@@ -29,7 +29,11 @@ def init_session():
 init_session()
 
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
-st.title("Gestión de Incidencias - EMV SIRE 2025")
+col_logo, col_titulo = st.columns([1, 4])
+with col_logo:
+    st.image("a1.png", width=500)
+with col_titulo:
+    st.markdown("<h1 style='margin-top: 25px;'>Gestión de Incidencias - EMV SIRE 2025</h1>", unsafe_allow_html=True)
 
 # --------- Selector de Modo ---------
 modo = st.sidebar.radio("Selecciona una opción", ["📝 Carga de Incidencias", "🔍 Búsqueda de Registros"])
@@ -279,17 +283,29 @@ elif modo == "🔍 Búsqueda de Registros":
 
         col1, col2 = st.columns(2)
         with col1:
-            usuario_sel = st.selectbox("Selecciona el Usuario", [""] + list(usuarios))
+            usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
-            localizador_sel = st.text_input("Escribe el Localizador", localizadores)
+            localizador_sel = st.text_input("Escribe el Localizador")
 
-        filtrado = df_busqueda[
-            (df_busqueda["nombre_usuario"] == usuario_sel) &
-            (df_busqueda["localizador"] == localizador_sel)
-        ]
+        # --------- Filtrado flexible por Usuario y/o Localizador ---------
+        filtro_usuario = usuario_sel.strip() != ""
+        filtro_localizador = localizador_sel.strip() != ""
 
+        if filtro_usuario and filtro_localizador:
+            filtrado = df_busqueda[
+                (df_busqueda["nombre_usuario"] == usuario_sel) &
+                (df_busqueda["localizador"] == localizador_sel)
+            ]
+        elif filtro_usuario:
+            filtrado = df_busqueda[df_busqueda["nombre_usuario"] == usuario_sel]
+        elif filtro_localizador:
+            filtrado = df_busqueda[df_busqueda["localizador"] == localizador_sel]
+        else:
+            filtrado = pd.DataFrame()  # No mostrar nada si no se completa ningún filtro
+
+        # --------- Mostrar resultados ---------
         if not filtrado.empty:
-            st.success(f"Se encontraron {len(filtrado)} registros para el usuario '{usuario_sel}' y localizador '{localizador_sel}'.")
+            st.success(f"Se encontraron {len(filtrado)} registros.")
             st.dataframe(filtrado, use_container_width=True)
         else:
             st.info("No se encontraron registros con esos criterios.")
