@@ -2,7 +2,6 @@ import streamlit as st
 import datetime
 import re
 
-# --------- Datos simulados ---------
 RESOLUCIONES = [
     "Reembolso Parcial/Partial Reimbursement", "Reembolso Total/Total Reimbursement",
     "Compensación/Compensation", "Descuento Próximo Viaje/Next Trip Discount",
@@ -68,7 +67,7 @@ if modo == "📝 Carga de Incidencias":
         return datos
 
     # Botón para forzar recarga de datos desde Google Sheets
-    if st.sidebar.button("🔃 Recargar Datos desde Google Sheet"):
+    if st.sidebar.button("🔄 Actualizar Datos"):
         st.cache_data.clear()
 
     datos_bd = cargar_datos_desde_google_sheets()
@@ -251,8 +250,7 @@ if modo == "📝 Carga de Incidencias":
         
         
         if col2.button("✅ Finalizar"):
-            st.warning("🧪 Entramos en el bloque Finalizar.")
-            st.session_state.incidencias.append(incidencia)
+                        st.session_state.incidencias.append(incidencia)
     
             st.write("🧾 Datos generales:", st.session_state.datos_generales)
             st.write("📦 Incidencias:", st.session_state.incidencias)
