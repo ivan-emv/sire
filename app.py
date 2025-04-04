@@ -24,6 +24,18 @@ def init_session():
         st.session_state.admin_autenticado = False
 
 init_session()
+
+# --------- Selector de Modo ---------
+modos = ["📝 Carga de Incidencias", "🔍 Búsqueda de Registros"]
+modo = st.sidebar.radio("Selecciona una opción", modos)
+
+# --------- Botón adicional para administración ---------
+if st.session_state.get("admin_autenticado", False):
+    if st.sidebar.button("🛠️ Gestión de Registros"):
+        st.session_state.modo_activo = "🛠️ Gestión de Registros"
+elif "modo_activo" in st.session_state and st.session_state["modo_activo"] == "🛠️ Gestión de Registros":
+    st.session_state.modo_activo = "📝 Carga de Incidencias"
+
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
 
 # 🔧 Ocultar la barra superior y el menú de Streamlit
@@ -49,7 +61,7 @@ modo = st.sidebar.radio("Selecciona una opción", [
     "🔍 Búsqueda de Registros"
 ] + (["🛠️ Gestión de Registros"] if st.session_state.admin_autenticado else []))
 
-if modo == "📝 Carga de Incidencias":
+if st.session_state.get("modo_activo", modo) == "📝 Carga de Incidencias":
     
     
     
@@ -309,7 +321,7 @@ if modo == "📝 Carga de Incidencias":
     
     
     # --------- Búsqueda de Registros ---------
-elif modo == "🔍 Búsqueda de Registros":
+elif st.session_state.get("modo_activo", modo) == "🔍 Búsqueda de Registros":
     st.header("🔍 Consulta de Incidencias por Usuario y Localizador")
 
     # @st.cache_data (eliminado para forzar recarga dinámica)(show_spinner=False)
