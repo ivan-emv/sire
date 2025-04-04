@@ -111,10 +111,10 @@ if modo == "📝 Carga de Incidencias":
             momento_viaje = st.selectbox("Momento del viaje", ["Pre Viaje", "En Ruta", "Post Viaje"])
             localizador = st.text_input("Localizador (código único de reserva)")
         with col2:
-            ciudad = st.selectbox("Ciudad", CIUDADES)
             nombre_usuario = st.selectbox("Nombre del Usuario", USUARIOS)
+            ciudad = st.selectbox("Ciudad", CIUDADES)
             operador = st.selectbox("Operador", OPERADORES)
-    
+
         submitted_gen = st.form_submit_button("Confirmar datos generales")
         if submitted_gen:
             st.session_state.datos_generales = {
@@ -281,7 +281,7 @@ elif modo == "🔍 Búsqueda de Registros":
         with col1:
             usuario_sel = st.selectbox("Selecciona el Usuario", usuarios)
         with col2:
-            localizador_sel = st.selectbox("Selecciona el Localizador", localizadores)
+            localizador_sel = st.text_input("Selecciona el Localizador", localizadores)
 
         filtrado = df_busqueda[
             (df_busqueda["nombre_usuario"] == usuario_sel) &
