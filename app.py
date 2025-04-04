@@ -72,7 +72,12 @@ if modo == "📝 Carga de Incidencias":
         return datos
     
     # Cargar los datos
-    datos_bd = cargar_datos_desde_google_sheets()
+    
+# Botón para forzar recarga de datos desde Google Sheets
+if st.sidebar.button("🔃 Recargar Datos desde Google Sheet"):
+    st.cache_data.clear()
+
+datos_bd = cargar_datos_desde_google_sheets()
     
     # Preparar los listados con los formatos solicitados
     USUARIOS = [u["Nombre"] for u in datos_bd["Usuarios"] if "Nombre" in u]
@@ -324,7 +329,7 @@ elif modo == "🔍 Búsqueda de Registros":
         hotel_sel = ""
         if area_sel.strip() == "Traslados/Transfers":
             tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
-        if area_sel.strip() == "Hotel":
+        if area_sel.strip() == "Hoteles":
             hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
 
         col9, col10 = st.columns(2)
