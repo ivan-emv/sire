@@ -350,7 +350,6 @@ elif modo == "🔍 Búsqueda de Registros":
             filtrado = df_busqueda[df_busqueda["localizador"] == localizador_sel]
         else:
             filtrado = df_busqueda.copy()  # Mostrar todo si no se completa ningún filtro
-
         
         if momento_sel:
             filtrado = filtrado[filtrado["momento_viaje"] == momento_sel]
