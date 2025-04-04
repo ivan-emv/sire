@@ -322,9 +322,9 @@ elif modo == "🔍 Búsqueda de Registros":
         # Filtros condicionales según el área
         tipo_traslado_sel = ""
         hotel_sel = ""
-        if area_sel == "Traslados":
+        if area_sel.strip().lower() == "traslados" or area_sel.strip().lower() == "traslados/transfers":
             tipo_traslado_sel = st.selectbox("Tipo de Traslado", [""] + sorted(df_busqueda["tipo_traslado"].dropna().unique()))
-        elif area_sel == "Hotel":
+        elif area_sel.strip().lower() == "hotel":
             hotel_sel = st.selectbox("Nombre del Hotel", [""] + sorted(df_busqueda["hotel"].dropna().unique()))
 
         col9, col10 = st.columns(2)
