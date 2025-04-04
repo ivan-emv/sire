@@ -29,15 +29,6 @@ def init_session():
 init_session()
 
 st.set_page_config(page_title="Carga de Incidencias - EMV SIRE", layout="wide")
-# 🔧 Ocultar la barra superior y el menú de Streamlit
-hide_streamlit_style = """
-    <style>
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-    </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 col_logo, col_titulo = st.columns([1, 4])
 with col_logo:
     st.image("a1.png", width=500)
